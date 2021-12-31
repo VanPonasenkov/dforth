@@ -1,9 +1,9 @@
 # dforth
  Very Raw Demo of a forth compiler in C# (Lacks many features)
 
-After extracting the folder to a local directory and installing all the necessary .NET debugging components run
+After downloading the binary from Releases page run the following command:
 `
-dotnet run @("path_to_file_here")
+dforth path_to_dmforth_file
 `
 
-example program - test.dmforth
+example program - examples/test.dmforth
