@@ -18,7 +18,6 @@ public class Tokenizer
                 case ".": tokens.Add(new Token(TokenEnum.DOT, ".")); break;
                 case ":": tokens.Add(new Token(TokenEnum.CMPST, ":")); break;
                 case ";": tokens.Add(new Token(TokenEnum.CMPEN, ";")); break;
-                case "DUP": tokens.Add(new Token(TokenEnum.DUP, "DUP")); break;
                 default: tokens.Add(new Token(TokenEnum.NUM, s)); break;
             }
         }

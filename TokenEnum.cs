@@ -9,5 +9,4 @@ public enum TokenEnum
     DOT,
     CMPST,
     CMPEN,
-    DUP
 }

@@ -4,10 +4,29 @@ public class Executor
 {
     public List<int> stack {get;set;}
     private Dictionary<string, List<Token>> lookup;
+    private IIntrinsic[] intrinsics;
+    
+    private (bool has, IIntrinsic? In) hasArrRepr(IIntrinsic[] arr, string str_val)
+    {
+        foreach(IIntrinsic In in arr)
+        {
+            if(In.Repr == str_val)
+            {
+                return (has: true, In: In);
+            }
+        }
+        return (has: false, In: null);
+    }
     public Executor()
     {
         this.stack = new();
         this.lookup = new();
+        this.intrinsics = new IIntrinsic[]
+        {
+            new Dup(),
+            new Swap(),
+            new Show()
+        };
     }
     public void Execute(List<Token> tokens)
     {
@@ -47,9 +66,15 @@ public class Executor
                 
                 case TokenEnum.NUM: 
                 {
+                    (bool has, IIntrinsic In) hARPR =hasArrRepr(this.intrinsics, token.value);
                     if(this.lookup.ContainsKey(token.value))
                     {
                         this.Execute(this.lookup[token.value]);
+                        break;
+                    }
+                    else if(hARPR.has)
+                    {
+                        hARPR.In.use(this.stack);
                         break;
                     }
                     try
@@ -64,29 +89,45 @@ public class Executor
                 }
                 case TokenEnum.DIV:
                 {
-                    int a = stack.Aggregate((a,c) => a/c);
-                    stack.Clear();
+                    int len = stack.Count;
+                    int n1 = stack[len - 2];
+                    int n2 = stack[len - 1];
+                    int a = n1 / n2;
+                    stack.RemoveAt(len - 1);
+                    stack.RemoveAt(len - 2);
                     stack.Add(a);
                     break;
                 }
                 case TokenEnum.PLUS:
                 {
-                    int a = stack.Aggregate((a,c) => a+c);
-                    stack.Clear();
+                    int len = stack.Count;
+                    int n1 = stack[len - 2];
+                    int n2 = stack[len - 1];
+                    int a = n1 + n2;
+                    stack.RemoveAt(len - 1);
+                    stack.RemoveAt(len - 2);
                     stack.Add(a);
                     break;
                 }
                 case TokenEnum.MINUS:
                 {
-                    int a = stack.Aggregate((a,c) => a-c);
-                    stack.Clear();
+                    int len = stack.Count;
+                    int n1 = stack[len - 2];
+                    int n2 = stack[len - 1];
+                    int a = n1 - n2;
+                    stack.RemoveAt(len - 1);
+                    stack.RemoveAt(len - 2);
                     stack.Add(a);
                     break;
                 }
                 case TokenEnum.MUL:
                 {
-                    int a = stack.Aggregate((a,c) => a*c);
-                    stack.Clear();
+                    int len = stack.Count;
+                    int n1 = stack[len - 2];
+                    int n2 = stack[len - 1];
+                    int a = n1 * n2;
+                    stack.RemoveAt(len - 1);
+                    stack.RemoveAt(len - 2);
                     stack.Add(a);
                     break;
                 }
@@ -99,11 +140,6 @@ public class Executor
                 case TokenEnum.CMPST:
                 {
                     isCmpTime = true;
-                    break;
-                }
-                case TokenEnum.DUP:
-                {
-                    stack.Add(stack[stack.Count - 1]);
                     break;
                 }
             }
